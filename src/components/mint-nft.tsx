@@ -306,38 +306,82 @@ export default function MintNFT() {
           <span style={{ color: "#00C089" }}> 🔥</span>
         </div>
         
-        {/* Mint button - обновлен на синий Base */}
-        <button
-          onClick={handleMint}
-          disabled={[TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status)}
-          style={{
-            margin: "10px",
-            padding: "12px 25px",
-            fontSize: "14px",
-            fontWeight: "bold",
-            fontFamily: "'Press Start 2P', 'Courier New', monospace",
-            cursor: [TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status) ? "not-allowed" : "pointer",
-            background: [TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status) 
-              ? "#333333" 
-              : status === TxStatus.CONFIRMED 
-                ? "#00C089" 
+        {/* Mint button - изменяем логику отображения */}
+        {status !== TxStatus.CONFIRMED ? (
+          <button
+            onClick={handleMint}
+            disabled={[TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status)}
+            style={{
+              margin: "10px",
+              padding: "12px 25px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              fontFamily: "'Press Start 2P', 'Courier New', monospace",
+              cursor: [TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status) ? "not-allowed" : "pointer",
+              background: [TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status) 
+                ? "#333333" 
                 : status === TxStatus.FAILED 
                   ? "#FF6868" 
                   : "#0052FF", // Base синий
-            color: status === TxStatus.CONFIRMED ? "#000" : "#fff",
-            border: "none",
-            borderRadius: "4px",
-            textTransform: "uppercase",
-            letterSpacing: "1px",
-            transition: "all 0.3s ease",
-            opacity: [TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status) ? 0.7 : 1
-          }}
-        >
-          {status === TxStatus.NONE ? "MINT NFT" : 
-           status === TxStatus.CONFIRMED ? "MINTED!" : 
-           status === TxStatus.FAILED ? "TRY AGAIN" : 
-           "PROCESSING..."}
-        </button>
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              transition: "all 0.3s ease",
+              opacity: [TxStatus.SUBMITTED, TxStatus.PENDING, TxStatus.AWAITING_APPROVAL].includes(status) ? 0.7 : 1
+            }}
+          >
+            {status === TxStatus.NONE ? "MINT NFT" : 
+             status === TxStatus.FAILED ? "TRY AGAIN" : 
+             "PROCESSING..."}
+          </button>
+        ) : (
+          // Показываем две кнопки при успешном минтинге
+          <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "10px 0" }}>
+            <button
+              style={{
+                padding: "10px 15px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                fontFamily: "'Press Start 2P', 'Courier New', monospace",
+                background: "#00C089", // Зеленый для Success
+                color: "#000",
+                border: "none",
+                borderRadius: "4px",
+                textTransform: "uppercase",
+                letterSpacing: "1px"
+              }}
+            >
+              SUCCESS
+            </button>
+            
+            <button
+              onClick={() => {
+                // Создаем текст для поста
+                const castText = `Just minted my REKT & BROKE NFT on Base! The perfect memoriam for my blown up portfolio. Check it out! 🔥 #RektAndBroke #Base`;
+                
+                // Открываем Warpcast с предзаполненным текстом
+                sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}`);
+              }}
+              style={{
+                padding: "10px 15px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                fontFamily: "'Press Start 2P', 'Courier New', monospace",
+                background: "#0052FF", // Base синий для Flex
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                cursor: "pointer"
+              }}
+            >
+              FLEX
+            </button>
+          </div>
+        )}
         
         {/* Progress bar - обновлен на синий Base */}
         {[TxStatus.PREPARING, TxStatus.AWAITING_APPROVAL, TxStatus.SUBMITTED, TxStatus.PENDING].includes(status) && (
